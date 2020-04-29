@@ -18,14 +18,13 @@ def change_single_fcc(ref, song_number, fcc):
     album_id = album.id
 
     update_song = session.query(Song) \
-        .join(Album, and_(Album.id == Song.album_id, album.id == album_id)) \
+        .join(Album, and_(Album.id == Song.album_id, Album.id == album_id)) \
         .filter(Song.number == song_number) \
         .one()
-    
+
     update_song.fcc_status = fcc
     session.commit()
-
-    return get_json(update_song)
+    return
 
 
 def change_album_fcc(ref, fcc):
@@ -33,7 +32,6 @@ def change_album_fcc(ref, fcc):
     session = Session()
 
     album = get_entity_from_tag(ref)
-
     for song in album.songs:
         song.fcc_status = fcc
         session.commit()

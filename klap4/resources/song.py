@@ -10,7 +10,7 @@ class SongAPI(Resource):
             fcc = json_data['fcc']
             if typ == 'single':
                 song_number = json_data['song_number']
-                update = change_single_fcc(ref, song_number, fcc)
+                change_single_fcc(ref, song_number, fcc)
             elif typ == 'all':
                 update = change_album_fcc(ref, fcc)
             
