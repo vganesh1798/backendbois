@@ -104,7 +104,7 @@ class ProgramSlot(SQLBase):
                             f"time={self.time})>"
     
     def __str__(self):
-        return str(self.id)
+        return str(self.program_type)+ '+' + str(self.day) + '+' + str(self.time)
 
 
 class ProgramLogEntry(SQLBase):

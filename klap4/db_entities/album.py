@@ -10,6 +10,7 @@ import klap4.db
 from klap4.db_entities.genre import Genre
 from klap4.db_entities.artist import Artist
 from klap4.db_entities import decompose_tag, full_module_name, SQLBase
+from klap4.utils.spotify_utils import getAlbumCover
 
 
 def find_artist_id(genre_abbr: str, artist_num: int):
@@ -106,6 +107,14 @@ class Album(SQLBase):
         return len(self.problems) + 1
 
     @property
+    def total_plays(self):
+        sum = 0
+        for song in self.songs:
+            sum = sum + song.times_played
+        
+        return sum
+
+    @property
     def ref(self):
         return self.artist.ref + self.letter
     
@@ -150,7 +159,8 @@ class Album(SQLBase):
                             "new_album": self.is_new,
                             "reviews": review_list,
                             "problems": problem_list,
-                            "songs": song_list
+                            "songs": song_list,
+                            "image": getAlbumCover(self.name, self.artist.name)
                             }
         return serialized_album
 

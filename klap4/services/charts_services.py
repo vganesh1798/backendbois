@@ -5,7 +5,7 @@ from sqlalchemy.sql.expression import and_
 from klap4.db_entities import SQLBase, decompose_tag, get_entity_from_tag
 from klap4.db_entities.genre import Genre
 from klap4.db_entities.artist import Artist
-from klap4.db_entities.album import Album, AlbumReview, AlbumProblem
+from klap4.db_entities.album import find_album, Album, AlbumReview, AlbumProblem
 from klap4.db_entities.song import Song
 from klap4.utils import get_json, format_object_list
 
@@ -26,7 +26,7 @@ def generate_chart(format: str, weeks: int) -> list:
         chart_list = session.query(Song, func.sum(Song.times_played)) \
             .filter(Song.last_played > weeks_ago
             ) \
-            .group_by(Song.id, Song.album_id
+            .group_by(Song.id
             ) \
             .all()
         
@@ -39,15 +39,18 @@ def generate_chart(format: str, weeks: int) -> list:
     
     better_charts = []
     ref_list = []
+
     for item in chart_list:
         genre_abbr = decompose_tag(item[0].ref).genre_abbr
         artist_num = decompose_tag(item[0].ref).artist_num
         album_letter = decompose_tag(item[0].ref).album_letter
         ref = genre_abbr + str(artist_num) + album_letter
+        album = get_entity_from_tag(ref)
         if ref in ref_list:
             continue
         else:
-            better_charts.append((genre_abbr, artist_num, album_letter, item[1]))
+            total_plays = album.total_plays
+            better_charts.append((genre_abbr, artist_num, album_letter, total_plays))
             ref_list.append(ref)
     
     sorted_charts = sorted(better_charts, key=lambda x:(-x[3], x[0], x[1], x[2]))

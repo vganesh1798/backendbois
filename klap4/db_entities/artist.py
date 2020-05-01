@@ -6,7 +6,7 @@ from sqlalchemy.orm import backref, relationship
 import klap4.db
 from klap4.db_entities.genre import Genre
 from klap4.db_entities import decompose_tag, full_module_name, SQLBase
-#from klap4.utils.spotify_utils import getArtistImage, getRelatedArtists
+from klap4.utils.spotify_utils import getArtistImage, getRelatedArtists
 
 def find_genre_id(genre_abbr: str):
     entity = None
@@ -77,7 +77,8 @@ class Artist(SQLBase):
                                 "name": self.name,
                                 "genre": self.genre.name,
                                 "albums": album_list,
-                                #"image": getArtistImage(self.name)
+                                "image": getArtistImage(self.name),
+                                "related_artists": getRelatedArtists(self.name)
                             }
         return serialized_artist
 
